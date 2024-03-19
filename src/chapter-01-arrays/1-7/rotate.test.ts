@@ -15,7 +15,7 @@ const data = [[
   ]
 ];
 
-describe('compressString', () => {
+describe('rotate matrix', () => {
   it('should rotate correct', () => {
     const result = rotate(data[0]);
     expect(result).toStrictEqual(data[1]);
