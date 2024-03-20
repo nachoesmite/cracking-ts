@@ -1,5 +1,3 @@
-import { EmptyStackException } from "./error";
-
 class MyStackNode<T> {
   next: MyStackNode<T> | null;
   data: T;

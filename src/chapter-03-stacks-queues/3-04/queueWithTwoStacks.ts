@@ -35,5 +35,6 @@ export class MyQueueWithStack<T> {
   peek(): T | null {
     return this.queue.peek();
   }
+  
 }
 
