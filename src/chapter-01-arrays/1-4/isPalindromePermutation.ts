@@ -1,7 +1,7 @@
 export const isPalindromePermutation = (str: string) => {
-  const charsCounter = new Map<String,number>();
+  const charsCounter = new Map<string, number>();
 
-  for (let c of str.replace(/\s/g, '').toLowerCase()) {
+  for (const c of str.replace(/\s/g, '').toLowerCase()) {
     const count = charsCounter.get(c);
     charsCounter.set(c, count === undefined ? 1 : count + 1);
   }

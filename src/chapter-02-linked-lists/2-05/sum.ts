@@ -19,7 +19,7 @@ export const sumLL = (a: LinkedList<number>, b: LinkedList<number>): LinkedList<
 
   const result = `${parseInt(numA) + parseInt(numB)}`;
   const resultLL: LinkedList<number> = new LinkedList();
-  for (let c of result.split('').reverse()) {
+  for (const c of result.split('').reverse()) {
     resultLL.appendToTail(parseInt(c));
   }
 

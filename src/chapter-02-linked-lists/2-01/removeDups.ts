@@ -13,7 +13,7 @@ export const removeDups = <T>(ll: LinkedList<T>): LinkedList<T> => {
     }
   });
   let offset = 0;
-  for (let indexToRemove of indexesToRemove ) {
+  for (const indexToRemove of indexesToRemove ) {
     ll.remove(indexToRemove - offset);
     offset++;
   }

@@ -35,6 +35,22 @@ export class LinkedList<T> {
     return current.next;
   }
 
+  appendNodeToTail(node: Node<T>): Node<T> {
+    if (this.head === null) {
+      this.head = node;
+      return this.head;
+    }
+
+    let current: Node<T> = this.head;
+
+    while (current.next !== null) {
+      current = current.next;
+    }
+
+    current.next = node;    
+    return current.next;
+  }
+
   remove(index: number) {
     if (this.head === null) {
       return;
@@ -66,7 +82,7 @@ export class LinkedList<T> {
     return this;
   }
 
-  traverse(func: (node: Node<T>) => any, checkStop = false) {
+  traverse(func: (node: Node<T>) => unknown, checkStop = false) {
     if (!this.head) {
       return;
     }

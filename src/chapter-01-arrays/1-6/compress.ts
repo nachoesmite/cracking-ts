@@ -6,7 +6,7 @@ export const compressString = (str: string): string => {
   let currentChar = str[0];
   let currentCounter = 0;
   let result = '';
-  for (let c of str) {
+  for (const c of str) {
     if (c === currentChar) {
       currentCounter++;
     } else {

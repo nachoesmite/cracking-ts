@@ -1,7 +1,7 @@
 import { LinkedList } from "../../dataTypes/linkedlist";
 
 export const partition = (ll: LinkedList<number>, partition: number) => {
-  let leftPartition: LinkedList<number> = new LinkedList();
+  const leftPartition: LinkedList<number> = new LinkedList();
   
   let iterator = ll.head;
   let prevIterator = null;
