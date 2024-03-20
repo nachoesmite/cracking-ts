@@ -1,4 +1,4 @@
-import { BinaryTree } from "./tree"
+import { BinaryTree, MinBinaryHeap } from "./tree"
 
 describe(`BinaryTree`, () => {
   describe(`Visit traversals`, () => {
@@ -42,5 +42,14 @@ describe(`BinaryTree`, () => {
       expect(storeInOrderArray).toStrictEqual([8, 9, 4, 10, 11, 5, 2, 12, 13, 6, 14, 15, 7, 3, 1]);
     })
   })
+})
+
+describe(`MinBinaryHeap`, () => {    
+    it(`Basic Insert`, () => {
+      const minBinaryTree = new MinBinaryHeap(10);
+      expect(minBinaryTree.value).toBe(10);
+      minBinaryTree.insert(9);
+      expect(minBinaryTree.value).toBe(9);
+    })
 })
 

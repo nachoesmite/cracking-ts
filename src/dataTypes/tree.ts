@@ -10,6 +10,69 @@ export class TreeNode {
 
 export type RawBinaryTreeChildrens = [number | null, number | null];
 
+export class MinBinaryHeap<T> {
+  left: MinBinaryHeap<T> | null;
+  right: MinBinaryHeap<T> | null;
+  value: T;
+  parent: MinBinaryHeap<T> | null;
+
+  constructor(value: T) {
+    this.left = null;
+    this.right = null;
+    this.value = value;
+    this.parent = null;
+  }
+
+  insert(value: T) {
+    const node = this. _addToStarterPosition(value); 
+    this._percolate(node);
+
+  }
+
+  _percolate(node: MinBinaryHeap<T>) {
+    while (node && node.parent && node.value > node.parent.value) {
+      const imRight = node === node.parent.right;
+      if (imRight && node.parent.left!.value < node.value) {
+        const leftNode = node.parent.left;
+        const temp = leftNode!.parent!.value;
+        leftNode!.parent!.value = leftNode!.value;
+        leftNode!.value = temp;
+        //change pointer
+        node = leftNode!;
+        continue;
+      }
+      const temp = node.parent.value;
+      node.parent.value = node.value;
+      node.value = temp;
+      //change pointer
+      node = node.parent;
+    }
+  }
+
+
+  _addToStarterPosition(value:T): MinBinaryHeap<T> {
+    //ESTO NO ANDA
+    const elements = [this.left, this.right];
+    while (elements.length > 0) {
+      const elem = elements.pop();
+      if (!elem!.left) {
+        elem!.left = new MinBinaryHeap(value);
+        elem!.left.parent = elem!;
+        return elem!.left;
+      } else if(!elem!.right) {
+        elem!.right = new MinBinaryHeap(value);
+        elem!.right.parent = elem!;
+        return elem!.right;
+      } else {
+        elements.push(elem!.left);
+        elements.push(elem!.right);
+      } 
+    }
+    return this.left.push(new MinBinaryHeap(value));
+  }
+}
+
+
 export class BinaryTree {
   /**
    * Binary Tree
