@@ -8,19 +8,16 @@ export class TreeNode {
   }
 }
 
-export type RawBinaryTreeChildrens = [number | null, number | null];
+export type RawBinaryTreeChildrens<T> = [T | null, T | null];
 
 export class MinBinaryHeap<T> {
-  left: MinBinaryHeap<T> | null;
-  right: MinBinaryHeap<T> | null;
-  value: T;
-  parent: MinBinaryHeap<T> | null;
+  /*
+  * A MinBinaryHeap is a complete binary tree with a node is minimum from its childs 
+  **/
+  root: MinBinaryHeapNode<T> | null;
 
-  constructor(value: T) {
-    this.left = null;
-    this.right = null;
-    this.value = value;
-    this.parent = null;
+  constructor() {
+    this.root = null;
   }
 
   insert(value: T) {
@@ -29,51 +26,144 @@ export class MinBinaryHeap<T> {
 
   }
 
-  _percolate(node: MinBinaryHeap<T>) {
-    while (node && node.parent && node.value > node.parent.value) {
+  getMin(): T | null {
+    if (!this.root) {
+      return null;
+    }
+    const value = this.root.value;
+    const newRoot = this._findBottomMostRightNode()!;
+    if (newRoot.parent === null) {
+      this.root = null;
+    } else {
+      if (newRoot.parent.left === newRoot) {
+        newRoot.parent.left = null;
+      } else {
+        newRoot.parent.right = null;
+      }
+      this.root.value = newRoot.value;
+      newRoot.parent = null;
+    }
+
+    this._fixRoot();
+
+    return value;
+  }
+
+  _fixRoot() {
+    let node = this.root!;
+    while (node.left && node.left.value < node.value || 
+      node.right && node.right.value < node.value) {
+        if (!node.right) {
+          [node.value, node.left!.value] = [node.left!.value, node.value];
+          node = node.left!;
+        } else if (!node.left) {
+          [node.value, node.right!.value] = [node.right!.value, node.value];
+          node = node.right!;
+        } else {
+          if (node.right!.value > node.left!.value) {
+            [node.value, node.left!.value] = [node.left!.value, node.value];
+            node = node.left!;
+          } else {
+            [node.value, node.right!.value] = [node.right!.value, node.value];
+            node = node.right!;
+          }
+        }
+      }
+  }
+  _findBottomMostRightNode(): MinBinaryHeapNode<T> | null {
+    if (!this.root) {
+      return null
+    }
+    let bottomMostRight = this.root;
+    const queue: MinBinaryHeapNode<T>[] = [this.root];
+  
+    while (queue.length > 0) {
+      const node = queue.shift()!;
+      bottomMostRight = node; // Update the value at each level
+      if (node.right) {
+        queue.push(node.right); // Explore right subtree first
+      }
+      if (node.left) {
+        queue.push(node.left);
+      }
+    }
+  
+    return bottomMostRight;
+  }
+
+  _percolate(node: MinBinaryHeapNode<T>) {
+    while (node && node.parent && node.value < node.parent.value) {
       const imRight = node === node.parent.right;
       if (imRight && node.parent.left!.value < node.value) {
         const leftNode = node.parent.left;
         const temp = leftNode!.parent!.value;
         leftNode!.parent!.value = leftNode!.value;
         leftNode!.value = temp;
-        //change pointer
         node = leftNode!;
         continue;
       }
       const temp = node.parent.value;
       node.parent.value = node.value;
       node.value = temp;
-      //change pointer
       node = node.parent;
     }
   }
 
 
-  _addToStarterPosition(value:T): MinBinaryHeap<T> {
-    //ESTO NO ANDA
-    const elements = [this.left, this.right];
+  _addToStarterPosition(value:T): MinBinaryHeapNode<T> {
+    const newNode = new MinBinaryHeapNode(value);
+
+    if (!this.root) {
+      this.root = newNode;
+      return newNode;
+    }
+
+    const elements: MinBinaryHeapNode<T>[] = [this.root];
+
+    if (this.root.left) {
+      elements.push(this.root.left);
+    }
+    if (this.root.right) {
+      elements.push(this.root.right);
+    }
+
     while (elements.length > 0) {
-      const elem = elements.pop();
-      if (!elem!.left) {
-        elem!.left = new MinBinaryHeap(value);
-        elem!.left.parent = elem!;
-        return elem!.left;
-      } else if(!elem!.right) {
-        elem!.right = new MinBinaryHeap(value);
-        elem!.right.parent = elem!;
-        return elem!.right;
+      const elem = elements.splice(0,1)[0];
+      if (!elem.left) {
+        elem.left = newNode;
+        elem.left.parent = elem!;
+        break;
+      } else if(!elem.right) {
+        elem.right = newNode;
+        elem.right.parent = elem!;
+        break;
       } else {
-        elements.push(elem!.left);
-        elements.push(elem!.right);
+        elements.push(elem.left);
+        elements.push(elem.right);
       } 
     }
-    return this.left.push(new MinBinaryHeap(value));
+    return newNode;
   }
+
+}
+
+export class MinBinaryHeapNode<T> {
+  left: MinBinaryHeapNode<T> | null;
+  right: MinBinaryHeapNode<T> | null;
+  value: T;
+  parent: MinBinaryHeapNode<T> | null;
+
+  constructor(value: T) {
+    this.left = null;
+    this.right = null;
+    this.value = value;
+    this.parent = null;
+  }
+
 }
 
 
-export class BinaryTree {
+export class BinaryTree<T> {
   /**
    * Binary Tree
    * 
@@ -100,23 +190,36 @@ export class BinaryTree {
    * if k is the level then is 2^k -1
    * 
   */
-  value: number;
-  left: BinaryTree | null;
-  right: BinaryTree | null;
+  value: T;
+  left: BinaryTree<T> | null;
+  right: BinaryTree<T> | null;
 
-  constructor(value: number, children: RawBinaryTreeChildrens = [null, null]) {
+  constructor(value: T, children: RawBinaryTreeChildrens<T> = [null, null]) {
     this.value = value;
-    this.left = children[0] !== null ? new BinaryTree(children[0]) : children[0];
-    this.right = children[1] !== null ? new BinaryTree(children[1]) : children[1];
+    this.left = children[0] !== null ? new BinaryTree(children[0]) : null;
+    this.right = children[1] !== null ? new BinaryTree(children[1]) : null;
   }
-
-
 
   isLeaf(): boolean {
     return this.left === null && this.right === null;
   }
 
-  inOrderTraversal(visit: (bt: BinaryTree) => unknown) {
+  height(node: BinaryTree<T> | null = null, height:number = -1): number {
+    const currentNode = node ?? this;
+    height++;
+    const max = [height];
+    if (currentNode.left) {
+      max.push(this.height(currentNode.left, height));
+    }
+    if (currentNode.right) {
+      max.push(this.height(currentNode.right, height));
+    }
+    return Math.max(...max);
+    
+  }
+
+  inOrderTraversal(visit: (bt: BinaryTree<T>) => unknown) {
+    
     if (this.left) {
       this.left.inOrderTraversal(visit);
     }
@@ -126,7 +229,7 @@ export class BinaryTree {
     }
   }
 
-  preOrderTraversal(visit: (bt: BinaryTree) => unknown) {
+  preOrderTraversal(visit: (bt: BinaryTree<T>) => unknown) {
     visit(this);
     if (this.left) {
       this.left.preOrderTraversal(visit);
@@ -135,7 +238,7 @@ export class BinaryTree {
       this.right.preOrderTraversal(visit);
     }
   }
-  postOrderTraversal(visit: (bt: BinaryTree) => unknown) {
+  postOrderTraversal(visit: (bt: BinaryTree<T>) => unknown) {
     if (this.left) {
       this.left.postOrderTraversal(visit);
     }
@@ -143,6 +246,25 @@ export class BinaryTree {
       this.right.postOrderTraversal(visit);
     }
     visit(this);
+  }
+
+  isValidBST(): boolean {
+    return this._isValidBST(this);
+  }
+
+  _isValidBST(node: BinaryTree<T> | null): boolean {
+    if (node === null) {
+      return true;
+    }
+    if (node.left && node.left.value > node.value) {
+      return false;
+    }
+
+    if (node.right && node.right.value < node.value) {
+      return false
+    }
+
+    return (this._isValidBST(node.left) && this._isValidBST(node.right))
   }
 }
 

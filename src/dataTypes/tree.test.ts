@@ -19,7 +19,7 @@ describe(`BinaryTree`, () => {
     
     it(`In Order Traversal`, () => {
       const storeInOrderArray: number[] = [];
-      const visit = (bt: BinaryTree) => {
+      const visit = (bt: BinaryTree<number>) => {
         storeInOrderArray.push(bt.value)
       };
       bt.inOrderTraversal(visit);
@@ -27,7 +27,7 @@ describe(`BinaryTree`, () => {
     })
     it(`Pre Order Traversal`, () => {
       const storeInOrderArray: number[] = [];
-      const visit = (bt: BinaryTree) => {
+      const visit = (bt: BinaryTree<number>) => {
         storeInOrderArray.push(bt.value)
       };
       bt.preOrderTraversal(visit);
@@ -35,7 +35,7 @@ describe(`BinaryTree`, () => {
     })
     it(`Post Order Traversal`, () => {
       const storeInOrderArray: number[] = [];
-      const visit = (bt: BinaryTree) => {
+      const visit = (bt: BinaryTree<number>) => {
         storeInOrderArray.push(bt.value)
       };
       bt.postOrderTraversal(visit);
@@ -45,11 +45,61 @@ describe(`BinaryTree`, () => {
 })
 
 describe(`MinBinaryHeap`, () => {    
-    it(`Basic Insert`, () => {
-      const minBinaryTree = new MinBinaryHeap(10);
-      expect(minBinaryTree.value).toBe(10);
-      minBinaryTree.insert(9);
-      expect(minBinaryTree.value).toBe(9);
+    it(`Basic Insert`, () => {  
+      const minBinaryTree = new MinBinaryHeap();
+      minBinaryTree.insert(4);
+      expect(minBinaryTree.root!.value).toBe(4);
+      minBinaryTree.insert(50);
+      minBinaryTree.insert(7);
+      minBinaryTree.insert(55);
+      minBinaryTree.insert(90);
+      minBinaryTree.insert(87);
+      minBinaryTree.insert(2);
+      expect(minBinaryTree.root?.value).toBe(2);
+
+      expect(minBinaryTree.root?.left?.value).toBe(50);
+      expect(minBinaryTree.root?.right?.value).toBe(4);
+
+      expect(minBinaryTree.root?.left?.left?.value).toBe(55);
+      expect(minBinaryTree.root?.left?.right?.value).toBe(90);
+      expect(minBinaryTree.root?.right?.left?.value).toBe(87);
+      expect(minBinaryTree.root?.right?.right?.value).toBe(7);
+    })
+
+    it(`Extracts Min`, () => {
+      const mbt = new MinBinaryHeap();
+      mbt.insert(1);
+      mbt.insert(50);
+      mbt.insert(23);
+      mbt.insert(88);
+      mbt.insert(90);
+      mbt.insert(32);
+      mbt.insert(74);
+      mbt.insert(80);
+
+      expect(mbt.root?.value).toBe(1);
+
+      expect(mbt.root?.left?.value).toBe(50);
+      expect(mbt.root?.right?.value).toBe(23);
+
+      expect(mbt.root?.left?.left?.value).toBe(80);
+      expect(mbt.root?.left?.right?.value).toBe(90);
+      expect(mbt.root?.right?.left?.value).toBe(32);
+      expect(mbt.root?.right?.right?.value).toBe(74);
+
+      expect(mbt.root?.left?.left?.left?.value).toBe(88);
+      expect(mbt.getMin()).toBe(1);
+
+      expect(mbt.root?.value).toBe(23);
+
+      expect(mbt.root?.left?.value).toBe(50);
+      expect(mbt.root?.right?.value).toBe(32);
+
+      expect(mbt.root?.left?.left?.value).toBe(80);
+      expect(mbt.root?.left?.right?.value).toBe(90);
+      expect(mbt.root?.right?.left?.value).toBe(88);
+      expect(mbt.root?.right?.right?.value).toBe(74);
+
     })
 })
 
